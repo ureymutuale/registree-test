@@ -109,7 +109,9 @@ export default {
 	watch: {},
 	created() {},
 	mounted() {
-		this.fetchData();
+		if(this.isAuthenticated) {
+			this.fetchData();
+		}
 	},
 	methods: {
 		async fetchData() {
@@ -135,6 +137,11 @@ export default {
 					}
 					this.loading = false;
 					this.$refs.table.refresh();
+				})
+				.catch((err) => {
+					if(err && err.response && err.response.status === 401) {
+						this.logout()
+					}
 				});
 		},
 	},
