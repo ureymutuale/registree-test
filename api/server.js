@@ -19,8 +19,14 @@ router.get("/raw", async (req, res) => {
 		body: requestBody,
 	};
 
-	const data = await service.getDataForUniversity("UJ");
-	response.data = data;
+	if (requestQuery.university) {
+		const data = await service.getDataForUniversity(requestQuery.university);
+		response.data = data;
+	} else {
+		const ujData = await service.getDataForUniversity("UJ");
+		const suData = await service.getDataForUniversity("SU");
+		response.data = [...ujData, ...suData];
+	}
 
 	res.json(response);
 });
