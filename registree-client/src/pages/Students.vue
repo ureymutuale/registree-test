@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import NavigationBar from "@/components/NavigationBar.vue";
 
 export default {
@@ -103,9 +104,24 @@ export default {
 	methods: {
 		async fetchData() {
 			this.loading = true;
-			
-			this.loading = false;
-			this.$refs.table.refresh();
+			axios
+				.get("http://localhost:3000/raw", {
+					timeout: 10000,
+					headers: {
+						"Access-Control-Allow-Origin": "*",
+                        "Access-Control-Allow-Credentials": "true",
+					},
+					crossDomain: true,
+				})
+				.then((response) => {
+					const responseData = response.data;
+					if (responseData != null && responseData.data != null) {
+						const data = responseData.data;
+						this.data = data;
+					}
+					this.loading = false;
+					this.$refs.table.refresh();
+				});
 		},
 	},
 };
