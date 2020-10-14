@@ -2,14 +2,14 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
-const client = require("./api-client");
+const service = require("./api-service");
 
 const router = express.Router();
 const app = express();
 
 const port = process.env.PORT || 3000;
 
-router.get("/raw", (req, res) => {
+router.get("/raw", async (req, res) => {
 	const requestQuery = req.query;
 	const requestBody = req.body;
 	// console.log(`\nQuery ${JSON.stringify(requestQuery)}\nBody: ${JSON.stringify(requestBody)}`);
@@ -19,20 +19,10 @@ router.get("/raw", (req, res) => {
 		body: requestBody,
 	};
 
-	const names = client.getNames("UJ");
-	const marks = client.getMarks("UJ");
+	const data = await service.getDataForUniversity("UJ");
+	response.data = data;
 
-	Promise.all([names, marks])
-		.then((resp) => {
-			response.data = resp;
-			res.json(response);
-		})
-		.catch((err) => {
-			console.log(err);
-			response.error = err;
-			res.json(response);
-		});
-	// res.json(response);
+	res.json(response);
 });
 
 //Configure CORS
