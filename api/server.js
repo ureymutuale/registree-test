@@ -1,24 +1,38 @@
-const express = require('express');
+const express = require("express");
 const cors = require("cors");
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
+
+const client = require("./api-client");
 
 const router = express.Router();
 const app = express();
 
 const port = process.env.PORT || 3000;
 
-
-router.get('/raw', (req, res) => {
-    const requestQuery = req.query;
+router.get("/raw", (req, res) => {
+	const requestQuery = req.query;
 	const requestBody = req.body;
 	// console.log(`\nQuery ${JSON.stringify(requestQuery)}\nBody: ${JSON.stringify(requestBody)}`);
 	var response = {
 		message: `Response Message`,
 		query: requestQuery,
 		body: requestBody,
-    };
-    
-    res.json(response);
+	};
+
+	const names = client.getNames("UJ");
+	const marks = client.getMarks("UJ");
+
+	Promise.all([names, marks])
+		.then((resp) => {
+			response.data = resp;
+			res.json(response);
+		})
+		.catch((err) => {
+			console.log(err);
+			response.error = err;
+			res.json(response);
+		});
+	// res.json(response);
 });
 
 //Configure CORS
@@ -50,6 +64,6 @@ app.use(cors(corsOptions));
 app.use("/", router);
 
 // listen on the port
-app.listen(port, function() {
-    console.log('Server started on port: ' + port);
+app.listen(port, function () {
+	console.log("Server started on port: " + port);
 });
