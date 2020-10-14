@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
+const auth = require("./auth");
 const service = require("./api-service");
 
 const router = express.Router();
@@ -57,6 +58,7 @@ Configure the express app so that it can
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
+app.use(auth);
 app.use("/", router);
 
 // listen on the port
