@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<NavigationBar />
-		<b-container fluid class="pt-3">
+		<b-container fluid class="pt-3" v-if="isAuthenticated">
 			<b-row>
 				<b-col>
 					<b-card>
@@ -45,11 +45,20 @@
 				</b-col>
 			</b-row>
 		</b-container>
+		<b-container class="pt-4" v-if="!isAuthenticated">
+			<b-jumbotron
+				header="Unauthorized Access"
+				lead="Please Login using your credentials"
+			>
+				<p>For more information contact the <a href="mailto:admin@email.com">admin@email.com</a> </p>
+			</b-jumbotron>
+		</b-container>
 	</div>
 </template>
 
 <script>
 import axios from "axios";
+import AuthMixin from '@/mixins/auth'
 import NavigationBar from "@/components/NavigationBar.vue";
 
 export default {
@@ -57,6 +66,7 @@ export default {
 	components: {
 		NavigationBar,
 	},
+	mixins: [AuthMixin],
 	props: {},
 	data() {
 		return {
@@ -107,6 +117,10 @@ export default {
 			axios
 				.get("http://localhost:3000/raw", {
 					timeout: 10000,
+					auth: {
+						username: this.authenticatedUserName,
+						password: this.authenticatedUserPassword,
+					},
 					headers: {
 						"Access-Control-Allow-Origin": "*",
                         "Access-Control-Allow-Credentials": "true",

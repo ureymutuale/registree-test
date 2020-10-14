@@ -13,12 +13,39 @@
 
 				<!-- Right aligned nav items -->
 				<b-navbar-nav class="ml-auto">
-					<b-nav-item-dropdown right>
+
+                    <b-nav-form class="mr-3" v-if="!isAuthenticated" @submit="login">
+						<label class="sr-only" for="inline-form-input-name">Name</label>
+						<b-input-group prepend="@" class="mb-2 mr-sm-2 mb-sm-0">
+							<b-input
+								id="username"
+								placeholder="Username"
+								type="text"
+								v-model="form.username"
+							></b-input>
+						</b-input-group>
+
+						<label class="sr-only" for="inline-form-input-username"
+							>Username</label
+						>
+						<b-input-group prepend="🔒" class="mb-2 mr-sm-2 mb-sm-0">
+							<b-input
+								id="password"
+								placeholder="Password"
+								type="password"
+								v-model="form.password"
+							></b-input>
+						</b-input-group>
+						<b-button variant="success" type="submit">Login</b-button>
+					</b-nav-form>
+
+					<b-nav-item-dropdown right v-if="isAuthenticated">
 						<!-- Using 'button-content' slot -->
 						<template v-slot:button-content>
-							<em>Username</em>
+                            <b-avatar class="mr-2" size="md"></b-avatar>
+							<em>{{ authenticatedUserName }}</em>
 						</template>
-						<b-dropdown-item>Sign Out</b-dropdown-item>
+						<b-dropdown-item @click="logout">Sign Out</b-dropdown-item>
 					</b-nav-item-dropdown>
 				</b-navbar-nav>
 			</b-collapse>
@@ -27,13 +54,19 @@
 </template>
 
 <script>
+import AuthMixin from '@/mixins/auth'
 
 export default {
 	name: "NavigationBar",
-	components: {},
+    components: {},
+    mixins: [AuthMixin],
 	props: {},
 	data() {
 		return {
+            form: {
+				username: "",
+				password: "",
+			},
 		};
 	},
 	computed: {
@@ -42,6 +75,9 @@ export default {
 	created() {},
 	mounted() {},
 	methods: {
+        login() {
+            this.authenticatedWith(this.form.username, this.form.password)
+        },
 	},
 };
 </script>
