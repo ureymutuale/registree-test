@@ -1,24 +1,113 @@
 <template>
 	<div>
-		Hello World
+		<NavigationBar />
+		<b-container fluid class="pt-3">
+			<b-row>
+				<b-col>
+					<b-card>
+						<template v-slot:header>
+							<h6 class="mb-0">Students</h6>
+						</template>
+						<template v-slot:footer>
+							<em>Footer Slot</em>
+						</template>
+						<div>
+							<b-row class="justify-content-between">
+								<b-col cols="auto">
+									<b-form-group>
+										<b-input-group>
+											<b-input-group-prepend is-text>
+												<b-icon icon="search" />
+											</b-input-group-prepend>
+
+											<b-form-input placeholder="search"></b-form-input>
+										</b-input-group>
+									</b-form-group>
+								</b-col>
+								<b-col cols="auto"> </b-col>
+							</b-row>
+							<b-table
+								responsive
+								hover
+								bordered
+								show-empty
+								head-variant="dark"
+								stacked="sm"
+								:fields="fields"
+								:items="data"
+								:filter="searchKeyword"
+								ref="table"
+							>
+							</b-table>
+						</div>
+						<b-overlay :show="isLoading" :opacity="0.5" no-wrap></b-overlay>
+					</b-card>
+				</b-col>
+			</b-row>
+		</b-container>
 	</div>
 </template>
 
 <script>
+import NavigationBar from "@/components/NavigationBar.vue";
 
 export default {
 	name: "Students",
 	components: {
+		NavigationBar,
 	},
 	props: {},
 	data() {
-		return {};
+		return {
+			loading: false,
+			searchKeyword: "",
+			fields: [
+				{
+					key: "university",
+					label: "University",
+					sortKey: "university",
+					sortable: true,
+				},
+				{
+					key: "student_id",
+					label: "Student #",
+					sortKey: "student_id",
+					sortable: true,
+				},
+				{
+					key: "name",
+					label: "Name",
+					sortKey: "name",
+					sortable: true,
+				},
+				{
+					key: "mark",
+					label: "Marks",
+					sortKey: "mark",
+					sortable: true,
+				},
+			],
+			data: [],
+		};
 	},
-	computed: {},
+	computed: {
+		isLoading() {
+			return this.loading;
+		},
+	},
 	watch: {},
 	created() {},
-	mounted() {},
-	methods: {},
+	mounted() {
+		this.fetchData();
+	},
+	methods: {
+		async fetchData() {
+			this.loading = true;
+			
+			this.loading = false;
+			this.$refs.table.refresh();
+		},
+	},
 };
 </script>
 
