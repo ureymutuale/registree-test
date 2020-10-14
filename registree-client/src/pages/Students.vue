@@ -140,6 +140,7 @@ export default {
 				})
 				.catch((err) => {
 					if(err && err.response && err.response.status === 401) {
+						alert('Unauthorized Access');
 						this.logout()
 					}
 				});
