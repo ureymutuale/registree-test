@@ -1,4 +1,6 @@
 const client = require("./api-client");
+const file = require("./file-helper");
+const basePath = process.env.DATA_PATH || ".";
 
 module.exports = {
 	getDataForUniversity: async function (universityCode) {
@@ -11,7 +13,6 @@ module.exports = {
 				Object.assign({}, item, marks[i])
 			);
 		} catch (err) {
-			console.log("CAUGHT");
 			console.log(err);
 		}
 
@@ -19,21 +20,35 @@ module.exports = {
 	},
 
 	getNamesForUniversity: async function (universityCode) {
-		var universityData = [];
+		var filename = `${basePath}/.cache/${universityCode}/names.json`;
+		var universityData = file.readJSONResponse(filename);
+		if (universityData == null) {
+			universityData = [];
+		}
 		try {
-			const names = await client.getNames(universityCode);
-			if (names === null) {
-				throw Error("Invalid Response");
-			}
-			Object.keys(names).forEach((key) => {
-				universityData.push({
-					student_id: key,
-					name: names[key],
-					university: universityCode,
+			client
+				.getNames(universityCode)
+				.then((resp) => {
+					universityData = [];
+					const names = resp;
+					if (names === null) {
+						throw Error("Invalid Response");
+					}
+					Object.keys(names).forEach((key) => {
+						universityData.push({
+							student_id: key,
+							name: names[key],
+							university: universityCode,
+						});
+					});
+
+					file.saveJSONResponse(filename, universityData);
+				})
+				.catch((err) => {
+					console.log(err);
+					throw err;
 				});
-			});
 		} catch (err) {
-			console.log("CAUGHT");
 			console.log(err);
 		}
 
@@ -41,21 +56,36 @@ module.exports = {
 	},
 
 	getMarksForUniversity: async function (universityCode) {
-		var universityData = [];
+		var filename = `${basePath}/.cache/${universityCode}/marks.json`;
+		var universityData = file.readJSONResponse(filename);
+		if (universityData == null) {
+			universityData = [];
+		}
+
 		try {
-            const marks = await client.getMarks(universityCode);
-			if (marks === null) {
-				throw Error("Invalid Response");
-			}
-			Object.keys(marks).forEach((key) => {
-				universityData.push({
-                    student_id: key,
-                    mark: marks[key],
-                    university: universityCode,
-                });
-            });
+			client
+				.getMarks(universityCode)
+				.then((resp) => {
+					universityData = [];
+					const marks = resp;
+					if (marks === null) {
+						throw Error("Invalid Response");
+					}
+					Object.keys(marks).forEach((key) => {
+						universityData.push({
+							student_id: key,
+							mark: marks[key],
+							university: universityCode,
+						});
+					});
+
+					file.saveJSONResponse(filename, universityData);
+				})
+				.catch((err) => {
+					console.log(err);
+					throw err;
+				});
 		} catch (err) {
-			console.log("CAUGHT");
 			console.log(err);
 		}
 

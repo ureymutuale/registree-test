@@ -15,7 +15,9 @@
         "cors": "^2.8.5",
         "express": "^4.17.1",
         "nodemon": "^1.19.4",
-        "axios": "^0.16.2"
+        "axios": "^0.16.2",
+        "fs": "0.0.1-security",
+        "fs-path": "0.0.24"
     },
     "engines": {
         "node": "10.x"
